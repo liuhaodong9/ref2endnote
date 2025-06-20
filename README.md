@@ -1,3 +1,5 @@
+> English · [中文版](README.zh.md)
+
 EndNote‑Toolkit
 
 Convert in‑text cross‑references into EndNote‑style citations.
