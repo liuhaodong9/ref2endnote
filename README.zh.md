@@ -1,3 +1,5 @@
+<!-- README.zh.md (中文) -->
+> [English version](README.md) · 中文
 # EndNote‑Toolkit
 
 将 **文章中交叉引用的文本** → **endnote** 的格式。
