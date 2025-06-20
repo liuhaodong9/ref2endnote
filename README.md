@@ -1,201 +1,119 @@
-# CQP‑EndNote‑Toolkit
+EndNote‑Toolkit
 
-> 将 **文章中交叉引用的文本** → **EndNote** 的格式。
+Convert in‑text cross‑references into EndNote‑style citations.
 
----
+Key Features
 
-## 功能亮点
+Script
 
-| 脚本                        | 作用                                                           | 关键字段                           | 数据源    |
-| ------------------------- | ------------------------------------------------------------ | ------------------------------ | ------ |
-| `quick_refs2ris_v2.py`    | 把 Word 中 reference list 的 `refs.txt` → **RIS** 文档 `refs.ris` | AU / TI / JO / PY / DOI / ISBN | 本地正则解析 |
-| `enrich_with_crossref.py` | 补全 `refs.ris` 的缺漏信息，生成 `refs_full.ris`                       | DOI · 卷期页 · 出版社                | 在线 API |
-| `renumber_by_title.py`    | 按 Word 中 reference list 对 `<rec-number>` 重新排序                | rec‑number                     | 本地算法匹配 |
+Purpose
 
----
+Key Fields
 
-## 安装与依赖
+Data Source
 
-```bash
-# 克隆仓库
-$ git clone https://github.com/<you>/CQP-EndNote-Toolkit.git
-$ cd CQP-EndNote-Toolkit
+quick_refs2ris_v2.py
 
-# 安装 Python 依赖
-$ pip install -r requirements.txt  # requests, rapidfuzz, rich, lxml ...
-```
+Convert the refs.txt reference list from Word into a RIS file refs.ris
 
-> **环境要求**：Python ≥ 3.8，且可联网访问 Crossref / OpenLibrary。
+AU / TI / JO / PY / DOI / ISBN
 
----
+Local regex parsing
 
-## 一键流水线
+enrich_with_crossref.py
 
-```bash
-python scripts/quick_refs2ris_v2.py      refs.txt       refs.ris
-python scripts/enrich_with_crossref.py   refs.ris       refs_full.ris
-python scripts/renumber_by_title.py      CQP.xml        refs.txt    CQP_renum.xml
-```
+Complete missing metadata in refs.ris and output refs_full.ris
 
-生成的 `CQP_renum.xml` 导入 EndNote / Cite While You Write 后，即可与 **黄金编号** 对齐。
+DOI · volume/issue/pages · publisher
 
----
+Online API
 
-## 目录结构
+renumber_by_title.py
 
-```
-CQP-EndNote-Toolkit/
-│─ quick_refs2ris_v2.py
-│─ enrich_with_crossref.py
-│─ renumber_by_title.py
-└─ README.md
-```
+Re‑order <rec-number> according to the reference list in Word
 
----
+rec‑number
 
-## 常见问题
+Local matching algorithm
 
-| 问题                  | 解决方案                                                                        |
-| ------------------- | --------------------------------------------------------------------------- |
-| Crossref 429 限速     | 增大 `--sleep` 或启用 VPN；也可在 `scripts/enrich_with_crossref.py` 中调整 `MAX_RETRY`。 |
-| XML 中 rec-number 冲突 | 确保黄金列表无重复编号，或先在 EndNote 批量清空 rec-number 再运行脚本。                              |
-| 非英文期刊匹配失败           | 在黄金列表和 XML 中统一译名，或手动校正拼写差异。                                                 |
+Installation & Dependencies
 
----
-
-## Word 批量替换
-
-1. 在 **Word → 替换 (Ctrl + H)** 中执行两次批量替换：
-
-第一次：
-
-| 输入框      | 内容（半角英文）                            |
-| -------- | ----------------------------------- |
-| **查找内容** | `\[([0-9]{1,4}),[ ]*([0-9]{1,4})\]` |
-| **替换为**  | `[\1] [\2]`                         |
-
-示例：
-
-```text
-[100, 101]   →   [100] [101]
-```
-
-第二次：
-
-| 输入框      | 内容                 |
-| -------- | ------------------ |
-| **查找内容** | `\[([0-9]{1,4})\]` |
-| **替换为**  | `{#\1}`            |
-
-示例：
-
-```text
-[57]  →  {#57}
-[201] → {#201}
-```
-
-2. 在 Word 功能区点击 **EndNote ► Update Citations and Bibliography** 完成编号同步。
-
----
-
-祝使用顺利！
-
-> Transform **in‑text cross‑references** into **EndNote‑style** citations.
-
----
-
-## Key Features
-
-| Script                    | Purpose                                                                           | Key fields                           | Data source          |
-| ------------------------- | --------------------------------------------------------------------------------- | ------------------------------------ | -------------------- |
-| `quick_refs2ris_v2.py`    | Convert `refs.txt` (reference list exported from Word) to **RIS** file `refs.ris` | AU / TI / JO / PY / DOI / ISBN       | Local regex parsing  |
-| `enrich_with_crossref.py` | Fill in missing metadata in `refs.ris` and produce `refs_full.ris`                | DOI · volume/issue/pages · publisher | Online API           |
-| `renumber_by_title.py`    | Re‑order `<rec-number>` according to the order of reference list in Word          | rec‑number                           | Local fuzzy matching |
-
----
-
-## Installation & Dependencies
-
-```bash
 # Clone the repository
 $ git clone https://github.com/<you>/CQP-EndNote-Toolkit.git
 $ cd CQP-EndNote-Toolkit
 
 # Install Python dependencies
 $ pip install -r requirements.txt  # requests, rapidfuzz, rich, lxml ...
-```
 
-> **Requirements**: Python ≥ 3.8 and internet access to Crossref / OpenLibrary.
+Environment: Python ≥ 3.8; internet access to Crossref / OpenLibrary.
 
----
+One‑click Pipeline
 
-## One‑click Pipeline
+python scripts/quick_refs2ris_v2.py  refs.txt  refs.ris
+python scripts/enrich_with_crossref.py  refs.ris  refs_full.ris
+python scripts/renumber_by_title.py  CQP.xml  refs.txt  CQP_renum.xml
 
-```bash
-python scripts/quick_refs2ris_v2.py      refs.txt       refs.ris
-python scripts/enrich_with_crossref.py   refs.ris       refs_full.ris
-python scripts/renumber_by_title.py      CQP.xml        refs.txt    CQP_renum.xml
-```
+After completion, import CQP_renum.xml into EndNote / Cite While You Write to align with the golden numbering.
 
-Import the generated `CQP_renum.xml` into EndNote / Cite While You Write to align with the **golden numbering**.
+Directory Structure
 
----
-
-## Directory Structure
-
-```
-CQP-EndNote-Toolkit/
+EndNote-Toolkit/
 │─ quick_refs2ris_v2.py
 │─ enrich_with_crossref.py
 │─ renumber_by_title.py
 └─ README.md
-```
 
----
+Issue
 
-## FAQ
+Solution
 
-| Question                        | Solution                                                                                                |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------- |
-| Crossref 429 rate‑limit         | Increase `--sleep`, enable a VPN, or tweak `MAX_RETRY` in `scripts/enrich_with_crossref.py`.            |
-| Duplicate rec-number in XML     | Ensure no duplicates in the golden list, or bulk‑clear rec-number in EndNote before running the script. |
-| Non‑English journal not matched | Standardize translations in the golden list & XML, or correct spelling manually.                        |
+Crossref 429 rate limit
 
----
+Increase --sleep or enable a VPN; you can also adjust MAX_RETRY in scripts/enrich_with_crossref.py.
 
-## Word Batch Replace
+rec-number conflicts in XML
 
-1. Perform two batch replacements in **Word → Replace (Ctrl + H)**.
+Ensure no duplicate numbers in the golden list, or first bulk‑clear rec-number in EndNote before running the script.
 
-First pass:
+Non‑English journal matching fails
 
-| Field            | Content (use half‑width characters) |
-| ---------------- | ----------------------------------- |
-| **Find what**    | `\[([0-9]{1,4}),[ ]*([0-9]{1,4})\]` |
-| **Replace with** | `[\1] [\2]`                         |
+Standardize translations in the golden list and XML, or manually resolve spelling differences.
 
-Example:
+Word
 
-```text
+Press Ctrl + H in Word.
+
+Field
+
+Value (half‑width characters)
+
+Find what
+
+\[([0-9]{1,4}),[ ]*([0-9]{1,4})\]
+
+Replace with
+
+[\1] [\2]
+
+After running Replace All, for example:
+
 [100, 101]   →   [100] [101]
-```
 
-Second pass:
+Field
 
-| Field            | Content            |
-| ---------------- | ------------------ |
-| **Find what**    | `\[([0-9]{1,4})\]` |
-| **Replace with** | `{#\1}`            |
+Value
 
-Example:
+Find what
 
-```text
+\[([0-9]{1,4})\]
+
+Replace with
+
+{#\1}
+
+Run Replace All again:
+
 [57]  →  {#57}
 [201] → {#201}
-```
 
-2. Click **EndNote ► Update Citations and Bibliography** to synchronize numbering.
-
----
-
-Happy referencing!
+In the Word ribbon, click EndNote ► Update Citations and Bibliography.
